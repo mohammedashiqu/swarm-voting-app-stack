@@ -1,0 +1,48 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    deploy:
+      replicas: 1
+  db:
+    image: postgres
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == master
+      resources:
+        limits:
+          cpus: "0.4"
+          memory: "100m"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+  vote:
+    image: ashiqummathoor/votenew
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: "1000m"
+          cpus: "0.9"
+    ports:
+      - 1000:80
+  worker:
+    image: ashiqummathoor/workernew
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          memory: "150m"
+          cpus: "0.1"
+  result:
+    image: ashiqummathoor/resultnew
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          memory: "1500m"
+          cpus: "0.9"
+    ports:
+      - 1001:80
